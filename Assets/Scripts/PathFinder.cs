@@ -38,7 +38,6 @@ public class PathFinder
     {
         TODOList = new List<Node>();
         DoneList = new List<Node>();
-
         TODOList.Add(new Node(start, 0, null, 0));
         goalTile = goal;
 
@@ -58,7 +57,57 @@ public class PathFinder
             // You just need to fill code inside this foreach only
             foreach (Tile nextTile in current.tile.Adjacents)
             {
+
+                double g = current.costSoFar + 10;
+                double h = HeuristicsDistance(nextTile, goal);
+                double f = g + h;
+                Boolean Done = false;
+                Boolean toDO = false;
+
+                foreach (Node doneTile in DoneList)
+                {
+                    if (doneTile.tile == nextTile)
+                    {
+                        Done = true;
+                        break;
+                    }
+
+                }
+
+                if (Done == true)
+                {
+                    continue;
+                }
+                foreach (Node todoTile in TODOList)
+                {
+                    if (todoTile.tile == nextTile)
+                    {
+
+
+                        toDO = true;
+                        if (g <= todoTile.costSoFar)
+                        {
+                            todoTile.cameFrom = current;
+                            todoTile.costSoFar = g;
+                            todoTile.priority = f;
+                        }
+                        
+                        break;                    
+                    }
+                    
+                }
+                if (toDO == false)
+                {
+                    TODOList.Add(new Node(nextTile, f, current, g));
+                }
                 
+
+                
+
+
+
+
+
             }
         }
         return new Queue<Tile>(); // Returns an empty Path if no path is found
@@ -92,7 +141,13 @@ public class PathFinder
             // Just increase the F cost of the enemy tile and the tiles around it by a certain ammount (say 30)
             foreach (Tile nextTile in current.tile.Adjacents)
             {
+                
+                
 
+            
+            
+            
+            
             }
         }
         return new Queue<Tile>(); // Returns an empty Path

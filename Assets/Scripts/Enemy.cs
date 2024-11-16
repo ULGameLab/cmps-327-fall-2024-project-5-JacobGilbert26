@@ -131,12 +131,127 @@ public class Enemy : MonoBehaviour
     // TODO: Enemy chases the player when it is nearby
     private void HandleEnemyBehavior2()
     {
-        
+        switch (state)
+        {
+            case EnemyState.DEFAULT: // generate random path 
+
+                //Changed the color to blue to differentiate from other enemies
+                material.color = Color.blue;
+
+                if (Vector3.Distance(playerGameObject.transform.position, transform.position) < visionDistance)
+                {
+                    state = EnemyState.CHASE;
+                }
+                else if (path.Count <= 0) path = pathFinder.RandomPath(currentTile, 20);
+
+                if (path.Count > 0)
+                {
+                    targetTile = path.Dequeue();
+                    state = EnemyState.MOVING;
+                }
+                break;
+
+            case EnemyState.MOVING:
+                //move
+                velocity = targetTile.gameObject.transform.position - transform.position;
+                transform.position = transform.position + (velocity.normalized * speed) * Time.deltaTime;
+
+                //if target reached
+                if (Vector3.Distance(transform.position, targetTile.gameObject.transform.position) <= 0.05f)
+                {
+                    currentTile = targetTile;
+                    state = EnemyState.DEFAULT;
+                }
+
+                
+
+                break;
+
+            case EnemyState.CHASE:
+                material.color = Color.red;
+                
+                if (path.Count <= 0)
+                {
+                    
+                    path = pathFinder.FindPathAStar(currentTile, playerGameObject.GetComponent<Player>().currentTile);
+
+                }
+                if (path.Count > 0)
+                {
+                    targetTile = path.Dequeue();
+                    state = EnemyState.MOVING;
+                }
+
+                break;
+            default:
+                state = EnemyState.DEFAULT;
+                break;
+        }
+
     }
 
     // TODO: Third behavior (Describe what it does)
     private void HandleEnemyBehavior3()
     {
+        switch (state)
+        {
+            case EnemyState.DEFAULT: // generate random path 
 
+                //Changed the color to cyan to differentiate from other enemies
+                material.color = Color.cyan;
+
+                if (Vector3.Distance(playerGameObject.transform.position, transform.position) < visionDistance)
+                {
+                    state = EnemyState.CHASE;
+                }
+                else if (path.Count <= 0) path = pathFinder.RandomPath(currentTile, 20);
+
+                if (path.Count > 0)
+                {
+                    targetTile = path.Dequeue();
+                    state = EnemyState.MOVING;
+                }
+                break;
+
+            case EnemyState.MOVING:
+                //move
+                velocity = targetTile.gameObject.transform.position - transform.position;
+                transform.position = transform.position + (velocity.normalized * speed) * Time.deltaTime;
+
+                //if target reached
+                if (Vector3.Distance(transform.position, targetTile.gameObject.transform.position) <= 0.05f)
+                {
+                    currentTile = targetTile;
+                    state = EnemyState.DEFAULT;
+                }
+
+
+
+                break;
+
+            case EnemyState.CHASE:
+                material.color = Color.magenta;
+
+                if (path.Count <= 0)
+                {
+                    Tile playerTile = playerGameObject.GetComponent<Player>().currentTile;
+                    Tile adjacent = playerTile.Adjacents[0];
+                    Tile adjacent2nd = adjacent.Adjacents[0];
+                    //These three lines of code try to get a tile two steps away from the player by using Tile's ".Adjacents" command.
+                    //Given that ".Adjacents" gives more than one Tile, I simplified it by only taking the first Tile.
+                    path = pathFinder.FindPathAStar(currentTile, adjacent2nd);
+
+                }
+                if (path.Count > 0)
+                {
+                    targetTile = path.Dequeue();
+                    state = EnemyState.MOVING;
+                }
+
+                break;
+            default:
+                state = EnemyState.DEFAULT;
+                break;
+        }
     }
 }

@@ -83,20 +83,7 @@ public class Player : MonoBehaviour
                     state = PlayerState.MOVING;
                 }
                 break;
-            case PlayerState.EVADE: // if possible find path to goal evading enemies otherwise choose next target based on evade behavior
-                speed = fastSpeed;
-                material.color = Color.yellow;
-
-                if (path.Count <= 0)
-                {
-                    path = pathFinder.FindPathAStarEvadeEnemy(currentTile, mapGenerator.goal);
-                    enemyCloseCounter = 0;
-                }
-
-                if (path.Count > 0) targetTile = path.Dequeue();
-                else targetTile = FindEvadeTile(closestEnemy.gameObject);
-                state = PlayerState.MOVING;
-                break;
+            
             case PlayerState.MOVING: //move to next target
                 //move
                 velocity = targetTile.transform.position - transform.position;
